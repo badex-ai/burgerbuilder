@@ -17,7 +17,7 @@ shouldComponentUpdate(nextProps, nextState){
 }  
 
 componentDidUpdate(){
-    console.log('Modal Updated')
+   // console.log('Modal Updated')
 }
     render() {
         return (

@@ -4,7 +4,7 @@ import classes from './Input.css'
 export default function Input(props) {
     let inputElement = null;
     const inputClasses = [classes.InputElement];
-    console.log("input invalidity:" + props.invalid);
+   // console.log("input invalidity:" + props.invalid);
     if(props.invalid && props.shouldValidate && props.touched){
         inputClasses.push(classes.Invalid )
     }

@@ -2,37 +2,28 @@ import React, { Component } from 'react';
 import Order from '../../../components/Order/Order';
 import axios from '../../../axios-orders';
 import classes from './Orders.css'
+import {connect} from 'react-redux'
+import * as actions from '../../../components/store/actions/index'
 import withErrorHandler from '../../../components/hoc/withErrorHandler/withErrorHandler';
+import Spinner from '../../../components/UI/Spinner/Spinner'
 
 class Orders extends Component {
 
-    state= {
-        orders: [],
-        loading: true
-    }
+    // state= {
+    //     orders: [],
+    //     loading: true
+    // }
 
     componentDidMount(){
-       
-       axios.get('/orders.json').then((res)=>{
-           console.log(res)
-
-        
-        const fetchedOrders = [];
-        for(let key in res.data){
-            fetchedOrders.push({
-                ...res.data[key],
-                id:key
-            })
-        }
-        this.setState({orders: fetchedOrders})
-        console.log(this.state.orders)
-       }).catch(error=>{
-        this.setState({loading: false},{loading: false}) 
-        
-       })
+       this.props.onFetchOrders(this.props.token, this.props.userId)
+      
     }
     render() {
-       const orders = this.state.orders.map((order)=>{ return <Order key={order.id} ingredients={order.ingredients} price={+order.price}/>});
+        let orders= <Spinner/>
+        if(!this.props.loading){
+            orders = this.props.orders.map((order)=>{ return <Order key={order.id} ingredients={order.ingredients} price={+order.price}/>});
+
+        }
    
         return (
             <div className={classes.Orders}>
@@ -45,4 +36,18 @@ class Orders extends Component {
     }
 }
 
-export default withErrorHandler(Orders,axios)
+const mapDispatchToProps=(dispatch)=>{
+    return {
+        onFetchOrders: (token,userId)=>{dispatch(actions.fetchOrders(token,userId))}
+    }
+}
+const mapStateToProps=(state)=>{
+    return {
+        orders: state.order.orders,
+        loading: state.order.loading,
+        token: state.auth.token,
+        userId: state.auth.userId
+    }
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(withErrorHandler(Orders,axios))
